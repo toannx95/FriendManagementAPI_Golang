@@ -11,7 +11,7 @@ LABEL maintainer="Toan Nguyen <toannx95@gmail.com>"
 RUN apk update && apk add --no-cache git
 
 # Set the current working directory inside the container 
-WORKDIR /src/
+WORKDIR /src
 
 # Copy go mod and sum files 
 COPY src/go.mod src/go.sum ./
@@ -20,7 +20,7 @@ COPY src/go.mod src/go.sum ./
 RUN go mod download
 
 # Copy the source from the current directory to the working Directory inside the container 
-COPY . .
+COPY src .
 
 # Build the Go app
 RUN go build -o main .
