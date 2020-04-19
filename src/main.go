@@ -1,8 +1,8 @@
 package main
 
 import (
-	"main/config"
-	"main/controller"
+	"config"
+	"controller"
 )
 
 func main() {
