@@ -20,7 +20,7 @@ COPY src/go.mod src/go.sum ./
 RUN go mod download
 
 # Copy the source from the current directory to the working Directory inside the container 
-COPY src .
+COPY . .
 
 # Build the Go app
 RUN go build -o main .
@@ -33,7 +33,7 @@ WORKDIR /root/
 
 # Copy the Pre-built binary file from the previous stage. Observe we also copied the .env file
 COPY --from=builder /src/main .
-COPY --from=builder src/.env .
+COPY --from=builder /src/.env .
 
 # Expose port 8080 to the outside world
 EXPOSE 8081
