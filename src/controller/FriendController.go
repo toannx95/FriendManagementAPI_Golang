@@ -1,9 +1,9 @@
 package controller
 
 import (
+	"friend/response"
+	"friend/service"
 	"net/http"
-	"response"
-	"service"
 )
 
 type FriendController struct {

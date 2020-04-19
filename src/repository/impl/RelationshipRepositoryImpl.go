@@ -2,8 +2,8 @@ package impl
 
 import (
 	"database/sql"
-	"entity"
 	"fmt"
+	"friend/entity"
 	"strconv"
 	"strings"
 )

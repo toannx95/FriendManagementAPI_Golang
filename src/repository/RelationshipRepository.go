@@ -1,6 +1,6 @@
 package repository
 
-import "entity"
+import "friend/entity"
 
 type RelationshipRepository interface {
 	CreateRelationship(relationship entity.Relationship) bool

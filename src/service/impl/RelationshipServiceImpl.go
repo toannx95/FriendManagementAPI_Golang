@@ -1,9 +1,9 @@
 package impl
 
 import (
-	"entity"
-	"enum"
-	"repository"
+	"friend/entity"
+	"friend/enum"
+	"friend/repository"
 )
 
 type RelationshipServiceImpl struct {

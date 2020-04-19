@@ -2,11 +2,11 @@ package controller
 
 import (
 	"database/sql"
+	repositoryImpl "friend/repository/impl"
+	serviceImpl "friend/service/impl"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	repositoryImpl "repository/impl"
-	serviceImpl "service/impl"
 )
 
 func HandleRequest(db *sql.DB) {

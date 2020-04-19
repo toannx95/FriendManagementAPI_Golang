@@ -1,7 +1,7 @@
 package service
 
 import (
-	ex "exception"
+	ex "friend/exception"
 	"net/http"
 )
 

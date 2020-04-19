@@ -1,8 +1,8 @@
 package main
 
 import (
-	"config"
-	"controller"
+	"friend/config"
+	"friend/controller"
 )
 
 func main() {

@@ -1,6 +1,6 @@
 package service
 
-import "entity"
+import "friend/entity"
 
 type RelationshipService interface {
 	CreateRelationship(relationship entity.Relationship) bool

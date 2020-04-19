@@ -1,14 +1,14 @@
 package impl
 
 import (
-	"dto"
 	"encoding/json"
-	"entity"
-	"enum"
-	ex "exception"
+	"friend/dto"
+	"friend/entity"
+	"friend/enum"
+	ex "friend/exception"
+	"friend/service"
+	"friend/utils"
 	"net/http"
-	"service"
-	"utils"
 )
 
 type FriendServiceImpl struct {
