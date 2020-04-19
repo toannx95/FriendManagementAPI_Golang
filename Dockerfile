@@ -20,7 +20,7 @@ COPY src/main/go.mod src/main/go.sum ./
 RUN go mod download 
 
 # Copy the source from the current directory to the working Directory inside the container 
-COPY . .
+COPY src .
 
 # Build the Go app
 RUN go build -o main .
