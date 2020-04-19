@@ -9,7 +9,7 @@ import (
 )
 
 func OpenDB() (*sql.DB, error) {
-	env := godotenv.Load("src/.env")
+	env := godotenv.Load("./src/.env")
 	if env != nil {
 		fmt.Print(env)
 	}
