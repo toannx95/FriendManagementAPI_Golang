@@ -11,7 +11,7 @@ LABEL maintainer="Toan Nguyen <toannx95@gmail.com>"
 RUN apk update && apk add --no-cache git
 
 # Set the current working directory inside the container 
-WORKDIR /src
+WORKDIR /src/main
 
 # Copy go mod and sum files 
 COPY src/main/go.mod src/main/go.sum ./
