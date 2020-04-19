@@ -1,0 +1,43 @@
+version: '3'
+services:
+  app:
+    container_name: friend_management
+    build:
+      context: . # Use an image built from the specified dockerfile in the current directory.
+      dockerfile: Dockerfile
+    ports: 
+      - 8081:8081
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - db
+    networks:
+      - backend
+
+  db:
+    image: mysql:5.7
+    container_name: db_mysql
+    ports: 
+      - 3306:3306
+    environment: 
+      - MYSQL_ROOT_HOST=${DB_HOST}
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD}
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+    volumes:
+      - database_mysql:/var/lib/mysql
+      - ./mysql:/docker-entrypoint-initdb.d
+    networks:
+      - backend
+
+volumes:
+  api:
+  database_mysql:
+  mysql:
+
+# Networks to be created to facilitate communication between containers
+networks:
+  backend:
+    driver: bridge
