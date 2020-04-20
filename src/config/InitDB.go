@@ -22,12 +22,12 @@ func OpenDB() (*sql.DB, error) {
 
 	username := "root"
 	password := "123456"
-	dbtype := "mysql"
+	dbType := "mysql"
 	dbName := "testdb"
-	dbHost := "localhost"
+	dbHost := "db"
 	dbPort := "3306"
 
-	conn, err := sql.Open(dbtype, username + ":" + password + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8&parseTime=True&loc=Asia%2FKolkata")
+	conn, err := sql.Open(dbType, username + ":" + password + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8&parseTime=True&loc=Asia%2FKolkata")
 	//conn, err := sql.Open("mysql", "root:123456@tcp(127.0.0.1:3306)/testdb")
 
 	if err != nil {
