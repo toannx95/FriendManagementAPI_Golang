@@ -21,7 +21,7 @@ services:
     ports: 
       - 3306:3306
     environment: 
-      - MYSQL_ROOT_HOST=%
+      - MYSQL_ROOT_HOST=mydb
       - MYSQL_DATABASE=testdb
       - MYSQL_USER=root
       - MYSQL_PASSWORD=123456
