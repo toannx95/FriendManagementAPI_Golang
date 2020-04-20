@@ -26,6 +26,7 @@ func OpenDB() (*sql.DB, error) {
 	password := "123456"
 	dbType := "mysql"
 	dbName := "testdb"
+	//dbHost := "localhost"
 	dbHost := "db"
 	dbPort := "3306"
 
