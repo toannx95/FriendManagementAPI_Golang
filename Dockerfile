@@ -15,13 +15,13 @@ WORKDIR /src
 
 # Copy go mod and sum files 
 COPY src/go.mod src/go.sum ./
-COPY .env ./
+COPY src/.env ./
 
 # Download all dependencies. Dependencies will be cached if the go.mod and the go.sum files are not changed 
 RUN go mod download
 
 # Copy the source from the current directory to the working Directory inside the container 
-COPY src .
+COPY src/ .
 
 # Build the Go app
 RUN go build -o main .
