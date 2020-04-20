@@ -27,7 +27,7 @@ func OpenDB() (*sql.DB, error) {
 	dbType := "mysql"
 	dbName := "testdb"
 	//dbHost := "localhost"
-	dbHost := "db"
+	dbHost := "mydb"
 	dbPort := "3306"
 
 	conn, err := sql.Open(dbType, username + ":" + password + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8&parseTime=True&loc=Asia%2FKolkata")
