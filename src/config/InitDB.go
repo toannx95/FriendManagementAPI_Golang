@@ -31,6 +31,7 @@ func OpenDB() (*sql.DB, error) {
 	dbPort := "3306"
 
 	url := username + ":" + password + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8&parseTime=True&loc=Asia%2FKolkata"
+	fmt.Println(url)
 	conn, err := sql.Open(dbType, url)
 
 	if err != nil {
