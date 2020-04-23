@@ -1,15 +1,15 @@
 package service
 
 import (
+	"friend/dto"
 	ex "friend/exception"
-	"net/http"
 )
 
 type FriendService interface {
-	CreateFriend(r *http.Request) (bool, *ex.Exception)
-	CreateSubscribe(r *http.Request) (bool, *ex.Exception)
-	CreateBlock(r *http.Request) (bool, *ex.Exception)
-	GetFriendsListByEmail(r *http.Request) ([]string, *ex.Exception)
-	GetCommonFriends(r *http.Request) ([]string, *ex.Exception)
-	GetReceiversList(r *http.Request) ([]string, *ex.Exception)
+	CreateFriend(friendDto dto.FriendDto) (bool, *ex.Exception)
+	CreateSubscribe(requestDto dto.RequestDto) (bool, *ex.Exception)
+	CreateBlock(requestDto dto.RequestDto) (bool, *ex.Exception)
+	GetFriendsListByEmail(emailDto dto.EmailDto) ([]string, *ex.Exception)
+	GetCommonFriends(friendDto dto.FriendDto) ([]string, *ex.Exception)
+	GetReceiversList(senderDto dto.SenderDto) ([]string, *ex.Exception)
 }

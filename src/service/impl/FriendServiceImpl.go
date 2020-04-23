@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"encoding/json"
 	"friend/dto"
 	"friend/entity"
 	"friend/enum"
@@ -16,12 +15,7 @@ type FriendServiceImpl struct {
 	UserService service.UserService
 }
 
-func (f FriendServiceImpl) CreateFriend(r *http.Request) (bool, *ex.Exception) {
-	var friendDto dto.FriendDto
-	if err := json.NewDecoder(r.Body).Decode(&friendDto); err != nil {
-		return false, &ex.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
-
+func (f FriendServiceImpl) CreateFriend(friendDto dto.FriendDto) (bool, *ex.Exception) {
 	firstEmail := friendDto.Friends[0]
 	secondEmail := friendDto.Friends[1]
 	if !utils.IsFormatEmail(firstEmail) || !utils.IsFormatEmail(secondEmail) {
@@ -51,12 +45,7 @@ func (f FriendServiceImpl) CreateFriend(r *http.Request) (bool, *ex.Exception) {
 	return true, nil
 }
 
-func (f FriendServiceImpl) CreateSubscribe(r *http.Request) (bool, *ex.Exception) {
-	var requestDto dto.RequestDto
-	if err := json.NewDecoder(r.Body).Decode(&requestDto); err != nil {
-		return false, &ex.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
-
+func (f FriendServiceImpl) CreateSubscribe(requestDto dto.RequestDto) (bool, *ex.Exception) {
 	requestor := requestDto.Requestor
 	target := requestDto.Target
 	if !utils.IsFormatEmail(requestor) || !utils.IsFormatEmail(target) {
@@ -94,12 +83,7 @@ func (f FriendServiceImpl) CreateSubscribe(r *http.Request) (bool, *ex.Exception
 	return true, nil
 }
 
-func (f FriendServiceImpl) CreateBlock(r *http.Request) (bool, *ex.Exception) {
-	var requestDto dto.RequestDto
-	if err := json.NewDecoder(r.Body).Decode(&requestDto); err != nil {
-		return false, &ex.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
-
+func (f FriendServiceImpl) CreateBlock(requestDto dto.RequestDto) (bool, *ex.Exception) {
 	requestor := requestDto.Requestor
 	target := requestDto.Target
 	if !utils.IsFormatEmail(requestor) || !utils.IsFormatEmail(target) {
@@ -129,12 +113,7 @@ func (f FriendServiceImpl) CreateBlock(r *http.Request) (bool, *ex.Exception) {
 	return true, nil
 }
 
-func (f FriendServiceImpl) GetFriendsListByEmail(r *http.Request) ([]string, *ex.Exception) {
-	var emailDto dto.EmailDto
-	if err := json.NewDecoder(r.Body).Decode(&emailDto); err != nil {
-		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
-
+func (f FriendServiceImpl) GetFriendsListByEmail(emailDto dto.EmailDto) ([]string, *ex.Exception) {
 	emails := []string{}
 	if !utils.IsFormatEmail(emailDto.Email) {
 		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
@@ -160,12 +139,8 @@ func (f FriendServiceImpl) GetFriendsListByEmail(r *http.Request) ([]string, *ex
 	return emails, nil
 }
 
-func (f FriendServiceImpl) GetCommonFriends(r *http.Request) ([]string, *ex.Exception) {
+func (f FriendServiceImpl) GetCommonFriends(friendDto dto.FriendDto) ([]string, *ex.Exception) {
 	commonEmails := []string{}
-	var friendDto dto.FriendDto
-	if err := json.NewDecoder(r.Body).Decode(&friendDto); err != nil {
-		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
 
 	firstEmail := friendDto.Friends[0]
 	secondEmail := friendDto.Friends[1]
@@ -239,12 +214,8 @@ func (f FriendServiceImpl) GetCommonFriends(r *http.Request) ([]string, *ex.Exce
 	return commonEmails, nil
 }
 
-func (f FriendServiceImpl) GetReceiversList(r *http.Request) ([]string, *ex.Exception) {
+func (f FriendServiceImpl) GetReceiversList(senderDto dto.SenderDto) ([]string, *ex.Exception) {
 	receiverEmails := []string{}
-	var senderDto dto.SenderDto
-	if err := json.NewDecoder(r.Body).Decode(&senderDto); err != nil {
-		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
 
 	senderEmail := senderDto.Sender
 	if !utils.IsFormatEmail(senderEmail) {

@@ -1,7 +1,6 @@
 package impl
 
 import (
-	"encoding/json"
 	"errors"
 	"friend/dto"
 	exp "friend/exception"
@@ -18,13 +17,7 @@ func (f UserServiceImpl) GetAllUsers() []string {
 	return f.UserRepository.GetAllUsers()
 }
 
-func (f UserServiceImpl) CreateUser(r *http.Request) (bool, *exp.Exception) {
-	emailDto := dto.EmailDto{}
-
-	if err := json.NewDecoder(r.Body).Decode(&emailDto); err != nil {
-		return false, &exp.Exception{Code: http.StatusBadRequest, Message: "Invalid request body!"}
-	}
-
+func (f UserServiceImpl) CreateUser(emailDto dto.EmailDto) (bool, *exp.Exception) {
 	if !utils.IsFormatEmail(emailDto.Email) {
 		return false, &exp.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
