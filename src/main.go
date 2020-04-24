@@ -2,12 +2,12 @@ package main
 
 import (
 	"friend/config"
-	"friend/controller"
+	"friend/router"
 )
 
 func main() {
 	db, _ := config.OpenDB()
 	defer db.Close()
 
-	controller.HandleRequest(db)
+	router.HandleRequest(db)
 }

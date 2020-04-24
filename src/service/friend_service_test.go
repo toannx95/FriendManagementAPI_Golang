@@ -1,10 +1,9 @@
-package impl
+package service
 
 import (
 	"friend/dto"
 	"friend/entity"
 	"friend/enum"
-	"friend/service"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )
@@ -15,15 +14,15 @@ func TestCreateFriend(t *testing.T) {
 	secondEmailId := int64(2)
 	relationship := entity.Relationship{FirstEmailId: firstEmailId, SecondEmailId: secondEmailId, Status: enum.FRIEND}
 
-	userServiceMock := service.UserServiceMock{}
-	relationshipServiceMock := service.RelationshipServiceMock{}
+	userServiceMock := UserServiceMock{}
+	relationshipServiceMock := RelationshipServiceMock{}
 
 	userServiceMock.On("FindUserIdByEmail", friendDto.Friends[0]).Return(firstEmailId)
 	userServiceMock.On("FindUserIdByEmail", friendDto.Friends[1]).Return(secondEmailId)
 	relationshipServiceMock.On("IsFriendedOrBlocked", firstEmailId, secondEmailId).Return(false)
 	relationshipServiceMock.On("CreateRelationship", relationship).Return(true)
 
-	friendService := FriendServiceImpl{relationshipServiceMock, userServiceMock}
+	friendService := FriendService{relationshipServiceMock, userServiceMock}
 
 	result, _ := friendService.CreateFriend(friendDto)
 	assert.Equal(t, true, result)
@@ -38,8 +37,8 @@ func TestCreateSubscribe(t *testing.T) {
 	relationship := entity.Relationship{FirstEmailId: requestorId, SecondEmailId: targetId, Status: enum.SUBSCRIBE}
 	subscriberEmailIds := []int64{3,4,5}
 
-	userServiceMock := service.UserServiceMock{}
-	relationshipServiceMock := service.RelationshipServiceMock{}
+	userServiceMock := UserServiceMock{}
+	relationshipServiceMock := RelationshipServiceMock{}
 
 	userServiceMock.On("FindUserIdByEmail", requestDto.Requestor).Return(requestorId)
 	userServiceMock.On("FindUserIdByEmail", requestDto.Target).Return(targetId)
@@ -47,7 +46,7 @@ func TestCreateSubscribe(t *testing.T) {
 	relationshipServiceMock.On("IsBlocked", requestorId, targetId).Return(false)
 	relationshipServiceMock.On("CreateRelationship", relationship).Return(true)
 
-	friendService := FriendServiceImpl{relationshipServiceMock, userServiceMock}
+	friendService := FriendService{relationshipServiceMock, userServiceMock}
 
 	result, _ := friendService.CreateSubscribe(requestDto)
 	assert.Equal(t, true, result)
@@ -61,15 +60,15 @@ func TestCreateBlock(t *testing.T) {
 	targetId := int64(2)
 	relationship := entity.Relationship{FirstEmailId: requestorId, SecondEmailId: targetId, Status: enum.BLOCK}
 
-	userServiceMock := service.UserServiceMock{}
-	relationshipServiceMock := service.RelationshipServiceMock{}
+	userServiceMock := UserServiceMock{}
+	relationshipServiceMock := RelationshipServiceMock{}
 
 	userServiceMock.On("FindUserIdByEmail", requestDto.Requestor).Return(requestorId)
 	userServiceMock.On("FindUserIdByEmail", requestDto.Target).Return(targetId)
 	relationshipServiceMock.On("IsBlocked", requestorId, targetId).Return(false)
 	relationshipServiceMock.On("CreateRelationship", relationship).Return(true)
 
-	friendService := FriendServiceImpl{relationshipServiceMock, userServiceMock}
+	friendService := FriendService{relationshipServiceMock, userServiceMock}
 
 	result, _ := friendService.CreateBlock(requestDto)
 	assert.Equal(t, true, result)
@@ -86,14 +85,14 @@ func TestGetFriendsListByEmail(t *testing.T) {
 	emailIds := []int64{2, 3}
 	emails := []string{"b@gmail.com", "c@gmail.com"}
 
-	userServiceMock := service.UserServiceMock{}
-	relationshipServiceMock := service.RelationshipServiceMock{}
+	userServiceMock := UserServiceMock{}
+	relationshipServiceMock := RelationshipServiceMock{}
 
 	userServiceMock.On("FindUserIdByEmail", emailDto.Email).Return(emailId)
 	relationshipServiceMock.On("FindByEmailIdAndStatus", emailId, []int64{enum.FRIEND}).Return(relationships)
 	userServiceMock.On("FindByIds", emailIds).Return(emails)
 
-	friendService := FriendServiceImpl{relationshipServiceMock, userServiceMock}
+	friendService := FriendService{relationshipServiceMock, userServiceMock}
 
 	result, _ := friendService.GetFriendsListByEmail(emailDto)
 	assert.Equal(t, emails, result)
@@ -112,15 +111,15 @@ func TestGetCommonFriends(t *testing.T) {
 	relationship2 := entity.Relationship{Id: 2, FirstEmailId: 1, SecondEmailId: 3, Status: enum.FRIEND}
 	relationships := []entity.Relationship{relationship1, relationship2}
 
-	userServiceMock := service.UserServiceMock{}
-	relationshipServiceMock := service.RelationshipServiceMock{}
+	userServiceMock := UserServiceMock{}
+	relationshipServiceMock := RelationshipServiceMock{}
 
 	userServiceMock.On("FindUserIdByEmail", friendDto.Friends[0]).Return(firstEmailId)
 	userServiceMock.On("FindUserIdByEmail", friendDto.Friends[1]).Return(secondEmailId)
 	relationshipServiceMock.On("FindByFirstOrSecondEmailIdAndStatus", firstEmailId, secondEmailId, []int64{enum.FRIEND}).Return(relationships)
 	userServiceMock.On("FindByIds", commonEmailIds).Return(commonEmails)
 
-	friendService := FriendServiceImpl{relationshipServiceMock, userServiceMock}
+	friendService := FriendService{relationshipServiceMock, userServiceMock}
 
 	result, _ := friendService.GetCommonFriends(friendDto)
 	assert.Equal(t, commonEmails, result)
@@ -143,8 +142,8 @@ func TestGetReceiversList(t *testing.T) {
 	emails := []string{"c@gmail.com"}
 	expectedEmails := []string{"c@gmail.com", "x@gmail.com"}
 
-	userServiceMock := service.UserServiceMock{}
-	relationshipServiceMock := service.RelationshipServiceMock{}
+	userServiceMock := UserServiceMock{}
+	relationshipServiceMock := RelationshipServiceMock{}
 
 	userServiceMock.On("FindUserIdByEmail", senderDto.Sender).Return(senderEmailId)
 	relationshipServiceMock.On("FindByEmailIdAndStatus", senderEmailId, []int64{enum.FRIEND}).Return(friendRelationships)
@@ -152,7 +151,7 @@ func TestGetReceiversList(t *testing.T) {
 	relationshipServiceMock.On("FindByEmailIdAndStatus", senderEmailId, []int64{enum.BLOCK}).Return(blockedRelationships)
 	userServiceMock.On("FindByIds", receiverEmailIds).Return(emails)
 
-	friendService := FriendServiceImpl{relationshipServiceMock, userServiceMock}
+	friendService := FriendService{relationshipServiceMock, userServiceMock}
 
 	result, _ := friendService.GetReceiversList(senderDto)
 	assert.Equal(t, expectedEmails, result)

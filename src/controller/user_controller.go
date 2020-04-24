@@ -9,7 +9,7 @@ import (
 )
 
 type UserController struct {
-	UserService service.UserService
+	UserService service.IUserService
 }
 
 func (u UserController) GetAllUsers(w http.ResponseWriter, r *http.Request) {

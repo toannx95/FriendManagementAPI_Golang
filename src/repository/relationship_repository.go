@@ -1,4 +1,4 @@
-package impl
+package repository
 
 import (
 	"database/sql"
@@ -8,11 +8,19 @@ import (
 	"strings"
 )
 
-type RelationshipRepositoryImpl struct {
+type IRelationshipRepository interface {
+	CreateRelationship(relationship entity.Relationship) bool
+	FindByTwoEmailIdsAndStatus(firstEmailId int64, secondEmailId int64, status []int64) []entity.Relationship
+	FindByEmailIdAndStatus(emailId int64, status []int64) []entity.Relationship
+	FindByFirstOrSecondEmailIdAndStatus(firstEmailId int64, secondEmailId int64, status []int64) []entity.Relationship
+	FindSubscribersByEmailId(emailId int64) []int64
+}
+
+type RelationshipRepository struct {
 	DB *sql.DB
 }
 
-func (r RelationshipRepositoryImpl) CreateRelationship(relationship entity.Relationship) bool {
+func (r RelationshipRepository) CreateRelationship(relationship entity.Relationship) bool {
 	query, err := r.DB.Prepare(`insert into relationship (first_email_id, second_email_id, status) values (?, ?, ?);`)
 	if err != nil {
 		return false
@@ -21,7 +29,7 @@ func (r RelationshipRepositoryImpl) CreateRelationship(relationship entity.Relat
 	return true
 }
 
-func (r RelationshipRepositoryImpl) FindByTwoEmailIdsAndStatus(firstEmailId int64, secondEmailId int64, status []int64) []entity.Relationship {
+func (r RelationshipRepository) FindByTwoEmailIdsAndStatus(firstEmailId int64, secondEmailId int64, status []int64) []entity.Relationship {
 	strStatusIds := make([]string, len(status))
 	for i, id := range status {
 		strStatusIds[i] = strconv.FormatInt(id, 10)
@@ -56,7 +64,7 @@ func (r RelationshipRepositoryImpl) FindByTwoEmailIdsAndStatus(firstEmailId int6
 	return relationships
 }
 
-func (r RelationshipRepositoryImpl) FindByEmailIdAndStatus(emailId int64, status []int64) []entity.Relationship {
+func (r RelationshipRepository) FindByEmailIdAndStatus(emailId int64, status []int64) []entity.Relationship {
 	strStatusIds := make([]string, len(status))
 	for i, id := range status {
 		strStatusIds[i] = strconv.FormatInt(id, 10)
@@ -91,7 +99,7 @@ func (r RelationshipRepositoryImpl) FindByEmailIdAndStatus(emailId int64, status
 	return relationships
 }
 
-func (r RelationshipRepositoryImpl) FindByFirstOrSecondEmailIdAndStatus(firstEmailId int64, secondEmailId int64, status []int64) []entity.Relationship {
+func (r RelationshipRepository) FindByFirstOrSecondEmailIdAndStatus(firstEmailId int64, secondEmailId int64, status []int64) []entity.Relationship {
 	strStatusIds := make([]string, len(status))
 	for i, id := range status {
 		strStatusIds[i] = strconv.FormatInt(id, 10)
@@ -128,7 +136,7 @@ func (r RelationshipRepositoryImpl) FindByFirstOrSecondEmailIdAndStatus(firstEma
 	return relationships
 }
 
-func (r RelationshipRepositoryImpl) FindSubscribersByEmailId(emailId int64) []int64 {
+func (r RelationshipRepository) FindSubscribersByEmailId(emailId int64) []int64 {
 	query := `select x.first_email_id 
 			from relationship x 
 			where x.second_email_id = ? 

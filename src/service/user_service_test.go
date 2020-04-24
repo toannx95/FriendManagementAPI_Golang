@@ -1,4 +1,4 @@
-package impl
+package service
 
 import (
 	"friend/dto"
@@ -13,7 +13,7 @@ func TestGetAllUsers(t *testing.T) {
 
 	userRepositoryMock := repository.UserRepositoryMock{}
 	userRepositoryMock.On("GetAllUsers").Return(listEmails)
-	userService := UserServiceImpl{userRepositoryMock}
+	userService := UserService{userRepositoryMock}
 
 	assert.Equal(t, listEmails, userService.GetAllUsers())
 	userRepositoryMock.AssertExpectations(t)
@@ -26,7 +26,7 @@ func TestCreateUser(t *testing.T) {
 	userRepositoryMock := repository.UserRepositoryMock{}
 	userRepositoryMock.On("ExistsByEmail", email).Return(false)
 	userRepositoryMock.On("CreateUser", email).Return(true)
-	userService := UserServiceImpl{userRepositoryMock}
+	userService := UserService{userRepositoryMock}
 
 	result, _ := userService.CreateUser(emailDto)
 	assert.Equal(t, true, result)
@@ -38,7 +38,7 @@ func TestExistsByEmail(t *testing.T) {
 
 	userRepositoryMock := repository.UserRepositoryMock{}
 	userRepositoryMock.On("ExistsByEmail", email).Return(false)
-	userService := UserServiceImpl{userRepositoryMock}
+	userService := UserService{userRepositoryMock}
 
 	assert.Equal(t, false, userService.ExistsByEmail(email))
 	userRepositoryMock.AssertExpectations(t)
@@ -49,7 +49,7 @@ func TestFindUserIdByEmail(t *testing.T) {
 
 	userRepositoryMock := repository.UserRepositoryMock{}
 	userRepositoryMock.On("FindUserIdByEmail", user.Email).Return(user.Id)
-	userService := UserServiceImpl{userRepositoryMock}
+	userService := UserService{userRepositoryMock}
 
 	result, _ := userService.FindUserIdByEmail(user.Email)
 
@@ -63,7 +63,7 @@ func TestFindByIds(t *testing.T) {
 
 	userRepositoryMock := repository.UserRepositoryMock{}
 	userRepositoryMock.On("FindByIds", listIds).Return(listEmails)
-	userService := UserServiceImpl{userRepositoryMock}
+	userService := UserService{userRepositoryMock}
 
 	assert.Equal(t, listEmails, userService.FindByIds(listIds))
 	userRepositoryMock.AssertExpectations(t)

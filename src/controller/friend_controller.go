@@ -9,7 +9,7 @@ import (
 )
 
 type FriendController struct {
-	FriendService service.FriendService
+	FriendService service.IFriendService
 }
 
 func (f FriendController) CreateFriend(w http.ResponseWriter, r *http.Request) {

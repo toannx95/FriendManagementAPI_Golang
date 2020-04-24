@@ -1,4 +1,4 @@
-package impl
+package repository
 
 import (
 	"database/sql"
@@ -7,11 +7,19 @@ import (
 	"strings"
 )
 
-type UserRepositoryImpl struct {
+type IUserRepository interface {
+	GetAllUsers() []string
+	CreateUser(email string) bool
+	ExistsByEmail(email string) bool
+	FindUserIdByEmail(email string) int64
+	FindByIds(ids []int64) []string
+}
+
+type UserRepository struct {
 	DB *sql.DB
 }
 
-func (u UserRepositoryImpl) GetAllUsers() []string {
+func (u UserRepository) GetAllUsers() []string {
 	result, err := u.DB.Query("select email from user")
 	if err != nil {
 		panic(err.Error())
@@ -29,7 +37,7 @@ func (u UserRepositoryImpl) GetAllUsers() []string {
 	return emails
 }
 
-func (u UserRepositoryImpl) CreateUser(email string) bool {
+func (u UserRepository) CreateUser(email string) bool {
 	query, err := u.DB.Prepare(`insert into user (email) values (?)`)
 	if err != nil {
 		return false
@@ -38,7 +46,7 @@ func (u UserRepositoryImpl) CreateUser(email string) bool {
 	return true
 }
 
-func (u UserRepositoryImpl) ExistsByEmail(email string) bool {
+func (u UserRepository) ExistsByEmail(email string) bool {
 	var id int
 	err := u.DB.QueryRow(`select id from user where email=?`, email).Scan(&id)
 	if err != nil {
@@ -47,7 +55,7 @@ func (u UserRepositoryImpl) ExistsByEmail(email string) bool {
 	return true
 }
 
-func (u UserRepositoryImpl) FindUserIdByEmail(email string) int64 {
+func (u UserRepository) FindUserIdByEmail(email string) int64 {
 	var id int64
 	err := u.DB.QueryRow("select id from user where email=?", email).Scan(&id)
 	if err != nil {
@@ -56,7 +64,7 @@ func (u UserRepositoryImpl) FindUserIdByEmail(email string) int64 {
 	return id
 }
 
-func (f UserRepositoryImpl) FindByIds(ids []int64) []string {
+func (f UserRepository) FindByIds(ids []int64) []string {
 	strIds := make([]string, len(ids))
 	for i, id := range ids {
 		strIds[i] = strconv.FormatInt(id, 10)

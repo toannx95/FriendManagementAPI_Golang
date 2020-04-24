@@ -4,10 +4,10 @@ import (
 	"regexp"
 )
 
-const emailRegex = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})"
+const EMAIL_REGEX = "[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})"
 
 func IsFormatEmail(email string) bool {
-	re, _ := regexp.Compile(emailRegex)
+	re, _ := regexp.Compile(EMAIL_REGEX)
 	if re.MatchString(email) {
 		return true
 	}
@@ -18,7 +18,7 @@ func GetEmailFromText(text string) []string {
 	keys := make(map[string]bool)
 	setEmails := []string{}
 
-	re := regexp.MustCompile(emailRegex)
+	re := regexp.MustCompile(EMAIL_REGEX)
 	submatchall := re.FindAllString(text, -1)
 
 	for _, element := range submatchall {

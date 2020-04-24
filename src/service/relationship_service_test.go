@@ -1,4 +1,4 @@
-package impl
+package service
 
 import (
 	"friend/entity"
@@ -13,7 +13,7 @@ func TestCreateRelationship(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("CreateRelationship", relationship).Return(true)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, true, relationshipService.CreateRelationship(relationship))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -30,7 +30,7 @@ func TestFindByTwoEmailIdsAndStatus(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindByTwoEmailIdsAndStatus", firstEmailId, secondEmailId, status).Return(expectedResult)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.FindByTwoEmailIdsAndStatus(firstEmailId, secondEmailId, status))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -46,7 +46,7 @@ func TestFindByEmailIdAndStatus(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindByEmailIdAndStatus", emailId, status).Return(expectedResult)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.FindByEmailIdAndStatus(emailId, status))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -64,7 +64,7 @@ func TestFindByFirstOrSecondEmailIdAndStatus(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindByFirstOrSecondEmailIdAndStatus", firstEmailId, secondEmailId, status).Return(expectedResult)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.FindByFirstOrSecondEmailIdAndStatus(firstEmailId, secondEmailId, status))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -76,7 +76,7 @@ func TestFindSubscribersByEmailId(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindSubscribersByEmailId", emailId).Return(expectedResult)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.FindSubscribersByEmailId(emailId))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -94,7 +94,7 @@ func TestIsFriendedOrBlocked(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindByTwoEmailIdsAndStatus", firstEmailId, secondEmailId, status).Return(listRelationships)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.IsFriendedOrBlocked(firstEmailId, secondEmailId))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -111,7 +111,7 @@ func TestIsSubscribedOrBlocked(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindByTwoEmailIdsAndStatus", firstEmailId, secondEmailId, status).Return(listRelationships)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.IsSubscribedOrBlocked(firstEmailId, secondEmailId))
 	relationshipRepositoryMock.AssertExpectations(t)
@@ -128,7 +128,7 @@ func TestIsBlocked(t *testing.T) {
 
 	relationshipRepositoryMock := repository.RelationshipRepositoryMock{}
 	relationshipRepositoryMock.On("FindByTwoEmailIdsAndStatus", firstEmailId, secondEmailId, status).Return(listRelationships)
-	relationshipService := RelationshipServiceImpl{relationshipRepositoryMock}
+	relationshipService := RelationshipService{relationshipRepositoryMock}
 
 	assert.Equal(t, expectedResult, relationshipService.IsBlocked(firstEmailId, secondEmailId))
 	relationshipRepositoryMock.AssertExpectations(t)

@@ -1,4 +1,4 @@
-package impl
+package repository
 
 //func TestCreateUser(t *testing.T)  {
 //	db, mock, err := sqlmock.New()

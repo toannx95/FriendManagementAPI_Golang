@@ -1,69 +1,77 @@
-package impl
+package service
 
 import (
 	"friend/dto"
 	"friend/entity"
 	"friend/enum"
 	ex "friend/exception"
-	"friend/service"
 	"friend/utils"
 	"net/http"
 )
 
-type FriendServiceImpl struct {
-	RelationshipService service.RelationshipService
-	UserService service.UserService
+type IFriendService interface {
+	CreateFriend(friendDto dto.FriendDto) (bool, *ex.Exception)
+	CreateSubscribe(requestDto dto.RequestDto) (bool, *ex.Exception)
+	CreateBlock(requestDto dto.RequestDto) (bool, *ex.Exception)
+	GetFriendsListByEmail(emailDto dto.EmailDto) ([]string, *ex.Exception)
+	GetCommonFriends(friendDto dto.FriendDto) ([]string, *ex.Exception)
+	GetReceiversList(senderDto dto.SenderDto) ([]string, *ex.Exception)
 }
 
-func (f FriendServiceImpl) CreateFriend(friendDto dto.FriendDto) (bool, *ex.Exception) {
+type FriendService struct {
+	IRelationshipService IRelationshipService
+	IUserService         IUserService
+}
+
+func (f FriendService) CreateFriend(friendDto dto.FriendDto) (bool, *ex.Exception) {
 	firstEmail := friendDto.Friends[0]
 	secondEmail := friendDto.Friends[1]
 	if !utils.IsFormatEmail(firstEmail) || !utils.IsFormatEmail(secondEmail) {
 		return false, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
 
-	firstEmailId, err1 := f.UserService.FindUserIdByEmail(firstEmail)
+	firstEmailId, err1 := f.IUserService.FindUserIdByEmail(firstEmail)
 	if err1 != nil {
 		return false, &ex.Exception{Code: http.StatusNotFound, Message: err1.Error()}
 	}
 
-	secondEmailId, err2 := f.UserService.FindUserIdByEmail(secondEmail)
+	secondEmailId, err2 := f.IUserService.FindUserIdByEmail(secondEmail)
 	if err2 != nil {
 		return false, &ex.Exception{Code: http.StatusNotFound, Message: err2.Error()}
 	}
 
 	// check friend and blocked
-	if f.RelationshipService.IsFriendedOrBlocked(firstEmailId, secondEmailId) {
+	if f.IRelationshipService.IsFriendedOrBlocked(firstEmailId, secondEmailId) {
 		return false, &ex.Exception{Code: http.StatusInternalServerError, Message: "Can not make friend!"}
 	}
 
 	relationship := entity.Relationship{FirstEmailId: firstEmailId, SecondEmailId: secondEmailId, Status: enum.FRIEND}
-	result := f.RelationshipService.CreateRelationship(relationship)
+	result := f.IRelationshipService.CreateRelationship(relationship)
 	if result != true {
 		return false, &ex.Exception{Code: http.StatusInternalServerError, Message: "Error when create friend!"}
 	}
 	return true, nil
 }
 
-func (f FriendServiceImpl) CreateSubscribe(requestDto dto.RequestDto) (bool, *ex.Exception) {
+func (f FriendService) CreateSubscribe(requestDto dto.RequestDto) (bool, *ex.Exception) {
 	requestor := requestDto.Requestor
 	target := requestDto.Target
 	if !utils.IsFormatEmail(requestor) || !utils.IsFormatEmail(target) {
 		return false, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
 
-	requestorId, err1 := f.UserService.FindUserIdByEmail(requestor)
+	requestorId, err1 := f.IUserService.FindUserIdByEmail(requestor)
 	if err1 != nil {
 		return false, &ex.Exception{Code: http.StatusNotFound, Message: err1.Error()}
 	}
 
-	targetId, err2 := f.UserService.FindUserIdByEmail(target)
+	targetId, err2 := f.IUserService.FindUserIdByEmail(target)
 	if err2 != nil {
 		return false, &ex.Exception{Code: http.StatusNotFound, Message: err2.Error()}
 	}
 
 	// check requestor has not subscribed target yet
-	subscriberEmailIds := f.RelationshipService.FindSubscribersByEmailId(targetId)
+	subscriberEmailIds := f.IRelationshipService.FindSubscribersByEmailId(targetId)
 	subscriberEmailIds = utils.RemoveItemFromList(subscriberEmailIds, targetId)
 
 	if subscriberEmailIds != nil && len(subscriberEmailIds) > 0 && utils.Contains(subscriberEmailIds, requestorId) {
@@ -71,61 +79,61 @@ func (f FriendServiceImpl) CreateSubscribe(requestDto dto.RequestDto) (bool, *ex
 	}
 
 	// check both emails have not blocked each other
-	if f.RelationshipService.IsBlocked(requestorId, targetId) {
+	if f.IRelationshipService.IsBlocked(requestorId, targetId) {
 		return false, &ex.Exception{Code: http.StatusInternalServerError, Message: "Can not subscribe!"}
 	}
 
 	relationship := entity.Relationship{FirstEmailId: requestorId, SecondEmailId: targetId, Status: enum.SUBSCRIBE}
-	result := f.RelationshipService.CreateRelationship(relationship)
+	result := f.IRelationshipService.CreateRelationship(relationship)
 	if result != true {
 		return false, &ex.Exception{Code: http.StatusInternalServerError, Message: "Error when subscribe!"}
 	}
 	return true, nil
 }
 
-func (f FriendServiceImpl) CreateBlock(requestDto dto.RequestDto) (bool, *ex.Exception) {
+func (f FriendService) CreateBlock(requestDto dto.RequestDto) (bool, *ex.Exception) {
 	requestor := requestDto.Requestor
 	target := requestDto.Target
 	if !utils.IsFormatEmail(requestor) || !utils.IsFormatEmail(target) {
 		return false, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
 
-	requestorId, err1 := f.UserService.FindUserIdByEmail(requestor)
+	requestorId, err1 := f.IUserService.FindUserIdByEmail(requestor)
 	if err1 != nil {
 		return false, &ex.Exception{Code: http.StatusNotFound, Message: err1.Error()}
 	}
 
-	targetId, err2 := f.UserService.FindUserIdByEmail(target)
+	targetId, err2 := f.IUserService.FindUserIdByEmail(target)
 	if err2 != nil {
 		return false, &ex.Exception{Code: http.StatusNotFound, Message: err2.Error()}
 	}
 
 	/// check blocked
-	if f.RelationshipService.IsBlocked(requestorId, targetId) {
+	if f.IRelationshipService.IsBlocked(requestorId, targetId) {
 		return false, &ex.Exception{Code: http.StatusInternalServerError, Message: "Can not subscribe!"}
 	}
 
 	relationship := entity.Relationship{FirstEmailId: requestorId, SecondEmailId: targetId, Status: enum.BLOCK}
-	result := f.RelationshipService.CreateRelationship(relationship)
+	result := f.IRelationshipService.CreateRelationship(relationship)
 	if result != true {
 		return false, &ex.Exception{Code: http.StatusInternalServerError, Message: "Error when subscribe!"}
 	}
 	return true, nil
 }
 
-func (f FriendServiceImpl) GetFriendsListByEmail(emailDto dto.EmailDto) ([]string, *ex.Exception) {
+func (f FriendService) GetFriendsListByEmail(emailDto dto.EmailDto) ([]string, *ex.Exception) {
 	emails := []string{}
 	if !utils.IsFormatEmail(emailDto.Email) {
 		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
 
-	emailId, err1 := f.UserService.FindUserIdByEmail(emailDto.Email)
+	emailId, err1 := f.IUserService.FindUserIdByEmail(emailDto.Email)
 	if err1 != nil {
 		return nil, &ex.Exception{Code: http.StatusNotFound, Message: err1.Error()}
 	}
 
 	// find list relationship by an email and friend status
-	relationships := f.RelationshipService.FindByEmailIdAndStatus(emailId, []int64{enum.FRIEND})
+	relationships := f.IRelationshipService.FindByEmailIdAndStatus(emailId, []int64{enum.FRIEND})
 	if relationships != nil {
 		// get list email_ids
 		emailIds := getEmailIdsFromListRelationships(relationships)
@@ -133,13 +141,13 @@ func (f FriendServiceImpl) GetFriendsListByEmail(emailDto dto.EmailDto) ([]strin
 
 		// get list emails by list email_ids
 		if emailIds != nil && len(emailIds) > 0 {
-			emails = f.UserService.FindByIds(emailIds)
+			emails = f.IUserService.FindByIds(emailIds)
 		}
 	}
 	return emails, nil
 }
 
-func (f FriendServiceImpl) GetCommonFriends(friendDto dto.FriendDto) ([]string, *ex.Exception) {
+func (f FriendService) GetCommonFriends(friendDto dto.FriendDto) ([]string, *ex.Exception) {
 	commonEmails := []string{}
 
 	firstEmail := friendDto.Friends[0]
@@ -148,18 +156,18 @@ func (f FriendServiceImpl) GetCommonFriends(friendDto dto.FriendDto) ([]string, 
 		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
 
-	firstEmailId, err1 := f.UserService.FindUserIdByEmail(firstEmail)
+	firstEmailId, err1 := f.IUserService.FindUserIdByEmail(firstEmail)
 	if err1 != nil {
 		return nil, &ex.Exception{Code: http.StatusNotFound, Message: err1.Error()}
 	}
 
-	secondEmailId, err2 := f.UserService.FindUserIdByEmail(secondEmail)
+	secondEmailId, err2 := f.IUserService.FindUserIdByEmail(secondEmail)
 	if err2 != nil {
 		return nil, &ex.Exception{Code: http.StatusNotFound, Message: err2.Error()}
 	}
 
 	// find list relationship between two email and friend status
-	relationships := f.RelationshipService.FindByFirstOrSecondEmailIdAndStatus(firstEmailId, secondEmailId, []int64{enum.FRIEND})
+	relationships := f.IRelationshipService.FindByFirstOrSecondEmailIdAndStatus(firstEmailId, secondEmailId, []int64{enum.FRIEND})
 	if relationships != nil && len(relationships) > 0 {
 		mapFirst := make(map[int64]bool)
 		friendsOfFirstEmail := []int64{}
@@ -208,13 +216,13 @@ func (f FriendServiceImpl) GetCommonFriends(friendDto dto.FriendDto) ([]string, 
 
 		// get string emails by emailId
 		if commonEmailIds != nil && len(commonEmailIds) > 0 {
-			commonEmails = f.UserService.FindByIds(commonEmailIds)
+			commonEmails = f.IUserService.FindByIds(commonEmailIds)
 		}
 	}
 	return commonEmails, nil
 }
 
-func (f FriendServiceImpl) GetReceiversList(senderDto dto.SenderDto) ([]string, *ex.Exception) {
+func (f FriendService) GetReceiversList(senderDto dto.SenderDto) ([]string, *ex.Exception) {
 	receiverEmails := []string{}
 
 	senderEmail := senderDto.Sender
@@ -222,18 +230,18 @@ func (f FriendServiceImpl) GetReceiversList(senderDto dto.SenderDto) ([]string, 
 		return nil, &ex.Exception{Code: http.StatusBadRequest, Message: "Wrong email format!"}
 	}
 
-	senderEmailId, err1 := f.UserService.FindUserIdByEmail(senderEmail)
+	senderEmailId, err1 := f.IUserService.FindUserIdByEmail(senderEmail)
 	if err1 != nil {
 		return nil, &ex.Exception{Code: http.StatusNotFound, Message: err1.Error()}
 	}
 
 	// get list friend_ids by emailId
-	friendRelationships := f.RelationshipService.FindByEmailIdAndStatus(senderEmailId, []int64{enum.FRIEND})
+	friendRelationships := f.IRelationshipService.FindByEmailIdAndStatus(senderEmailId, []int64{enum.FRIEND})
 	friendEmailIds := getEmailIdsFromListRelationships(friendRelationships)
 	friendEmailIds = utils.RemoveItemFromList(friendEmailIds, senderEmailId)
 
 	// get subscribers by emailId
-	subscriberEmailIds := f.RelationshipService.FindSubscribersByEmailId(senderEmailId)
+	subscriberEmailIds := f.IRelationshipService.FindSubscribersByEmailId(senderEmailId)
 	subscriberEmailIds = utils.RemoveItemFromList(subscriberEmailIds, senderEmailId)
 
 	// list receiver emailIds
@@ -245,7 +253,7 @@ func (f FriendServiceImpl) GetReceiversList(senderDto dto.SenderDto) ([]string, 
 	}
 
 	// get list blocked_ids
-	blockedRelationships := f.RelationshipService.FindByEmailIdAndStatus(senderEmailId, []int64{enum.BLOCK})
+	blockedRelationships := f.IRelationshipService.FindByEmailIdAndStatus(senderEmailId, []int64{enum.BLOCK})
 	blockedMailIds := getEmailIdsFromListRelationships(blockedRelationships)
 	blockedMailIds = utils.RemoveItemFromList(blockedMailIds, senderEmailId)
 
@@ -255,7 +263,7 @@ func (f FriendServiceImpl) GetReceiversList(senderDto dto.SenderDto) ([]string, 
 	}
 
 	// find email by list receiverEmailIds
-	receiverEmails = f.UserService.FindByIds(receiverEmailIds)
+	receiverEmails = f.IUserService.FindByIds(receiverEmailIds)
 
 	// get mentionedEmail from text of sender
 	if &senderDto.Text != nil {
