@@ -1,6 +1,6 @@
 # FriendManagementAPI_Golang
 
-**1. Summary**
+## 1. Summary
 -	Programming Language: Golang
 -	Packages: 
     + database/sql
@@ -15,11 +15,17 @@
 -	Deployment: Linux, Docker
 -	Tools: Goland, Git
 
-**2. Deployment**
-- This project was deployed by Docker to Linux server at: http://localhost:8081/
-- Optionally, I have supported OpenAPI Specification by the Swagger framework, you can see at:
-http://localhost:8081/swagger/index.html#/
+## 2. Structure
 
+![structure](https://user-images.githubusercontent.com/18362758/80342445-66398280-888e-11ea-8b96-ef54b1165343.PNG)
+
+## 3. API Documentation
+
+![Friend_API](https://user-images.githubusercontent.com/18362758/80342267-0d69ea00-888e-11ea-9dfa-048433c250d2.PNG)
+
+## 4. Deployment
+- This project was deployed by Docker to Linux server at: http://localhost:8081/
+- OpenAPI Specification by the Swagger framework: http://localhost:8081/swagger/index.html#/
 
 **# Prerequisites:**
 -	Docker
