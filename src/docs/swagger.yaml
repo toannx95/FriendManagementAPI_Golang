@@ -1,0 +1,301 @@
+basePath: /
+definitions:
+  dto.EmailDto:
+    properties:
+      email:
+        type: string
+    type: object
+  dto.FriendDto:
+    properties:
+      friends:
+        items:
+          type: string
+        type: array
+    type: object
+  dto.RequestDto:
+    properties:
+      requestor:
+        type: string
+      target:
+        type: string
+    type: object
+  dto.SenderDto:
+    properties:
+      sender:
+        type: string
+      text:
+        type: string
+    type: object
+  response.Error:
+    properties:
+      error:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      count:
+        type: integer
+      friends:
+        items:
+          type: string
+        type: array
+      success:
+        type: boolean
+    type: object
+  response.Success:
+    properties:
+      success:
+        type: boolean
+    type: object
+host: localhost:8081
+info:
+  contact:
+    email: soberkoder@swagger.io
+    name: API Support
+  description: This is a sample service for managing Friend Management
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://swagger.io/terms/
+  title: Friend Management API
+  version: "1.0"
+paths:
+  /friends/block:
+    post:
+      consumes:
+      - application/json
+      description: API to block updates from an email address
+      parameters:
+      - description: requestDto
+        in: body
+        name: requestDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: CreateBlock
+      tags:
+      - Friend
+  /friends/create-friend:
+    post:
+      consumes:
+      - application/json
+      description: API to create friend connection between two email addresses
+      parameters:
+      - description: friendDto
+        in: body
+        name: friendDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FriendDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: CreateFriend
+      tags:
+      - Friend
+  /friends/get-common-friends-list:
+    post:
+      consumes:
+      - application/json
+      description: API to retrieve the common friends list between two email addresses
+      parameters:
+      - description: friendDto
+        in: body
+        name: friendDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.FriendDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: GetCommonFriends
+      tags:
+      - Friend
+  /friends/get-friends-list:
+    post:
+      consumes:
+      - application/json
+      description: API to retrieve the friends list for an email address
+      parameters:
+      - description: emailDto
+        in: body
+        name: emailDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EmailDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: GetFriendsListByEmail
+      tags:
+      - Friend
+  /friends/get-receivers-list:
+    post:
+      consumes:
+      - application/json
+      description: API to retrieve all email addresses that can receive updates from
+        an email address
+      parameters:
+      - description: senderDto
+        in: body
+        name: senderDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.SenderDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: GetReceiversList
+      tags:
+      - Friend
+  /friends/subscribe:
+    post:
+      consumes:
+      - application/json
+      description: API to subscribe to updates from an email address
+      parameters:
+      - description: requestDto
+        in: body
+        name: requestDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.RequestDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: CreateSubscribe
+      tags:
+      - Friend
+  /users:
+    get:
+      consumes:
+      - application/json
+      description: API to get all emails
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Response'
+      summary: GetAllUsers
+      tags:
+      - User
+  /users/create-user:
+    post:
+      consumes:
+      - application/json
+      description: API to create new user
+      parameters:
+      - description: emailDto
+        in: body
+        name: emailDto
+        required: true
+        schema:
+          $ref: '#/definitions/dto.EmailDto'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/response.Error'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: CreateUser
+      tags:
+      - User
+swagger: "2.0"

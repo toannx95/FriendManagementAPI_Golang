@@ -3,9 +3,11 @@ package router
 import (
 	"database/sql"
 	"friend/controller"
+	_ "friend/docs"
 	"friend/repository"
 	"friend/service"
 	"github.com/gorilla/mux"
+	httpSwagger "github.com/swaggo/http-swagger"
 	"log"
 	"net/http"
 )
@@ -42,6 +44,9 @@ func HandleRequest(db *sql.DB) {
 	myRouter.HandleFunc("/friends/get-friends-list", friendHandel.GetFriendsListByEmail).Methods("POST")
 	myRouter.HandleFunc("/friends/get-common-friends-list", friendHandel.GetCommonFriends).Methods("POST")
 	myRouter.HandleFunc("/friends/get-receivers-list", friendHandel.GetReceiversList).Methods("POST")
+
+	// Swagger
+	myRouter.PathPrefix("/swagger").Handler(httpSwagger.WrapHandler)
 
 	log.Fatal(http.ListenAndServe(":8081", myRouter))
 }
