@@ -21,14 +21,6 @@ func OpenDB() (*sql.DB, error) {
 	dbHost := os.Getenv("DB_HOST")
 	dbPort := os.Getenv("DB_PORT")
 
-	//username := "root"
-	//password := "123456"
-	//dbType := "mysql"
-	//dbName := "testdb"
-	//dbHost := "localhost"
-	////dbHost := "mydb"
-	//dbPort := "3306"
-
 	url := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local", username, password, dbHost, dbPort, dbName)
 	conn, err := sql.Open(dbType, url)
 
