@@ -20,6 +20,11 @@ type RelationshipRepository struct {
 	DB *sql.DB
 }
 
+// use for testing
+func NewRelationshipRepository(db *sql.DB) RelationshipRepository {
+	return RelationshipRepository{DB: db}
+}
+
 func (r RelationshipRepository) CreateRelationship(relationship entity.Relationship) bool {
 	query, err := r.DB.Prepare(`insert into relationship (first_email_id, second_email_id, status) values (?, ?, ?);`)
 	if err != nil {

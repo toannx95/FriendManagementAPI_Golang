@@ -19,6 +19,11 @@ type UserRepository struct {
 	DB *sql.DB
 }
 
+// use for testing
+func NewUserRepository(db *sql.DB) UserRepository {
+	return UserRepository{DB: db}
+}
+
 func (u UserRepository) GetAllUsers() []string {
 	result, err := u.DB.Query("select email from user")
 	if err != nil {
