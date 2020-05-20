@@ -37,7 +37,6 @@
 ```
       git clone https://github.com/toannx95/FriendManagementAPI_Golang
       
-      cd src
       docker-compose up -d
 ```
 
